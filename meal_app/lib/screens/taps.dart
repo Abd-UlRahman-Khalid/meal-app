@@ -73,33 +73,19 @@ class _TapScreenState extends ConsumerState<TapsScreen>{
   
   @override
   Widget build(BuildContext context) {
-    final meals=ref.watch(mealProvider);
-    final activeFilters=ref.watch(filterProvider);
-    
-    final avalibaleMeals=meals.where((meal){
-      if(activeFilters[Filter.glutenFree]! && !meal.isGlutenFree){
-        return false;
-      }
-      if(activeFilters[Filter.lactuseFree]! && !meal.isLactoseFree){
-        return false;
-      }
-      if(activeFilters[Filter.vegetarian]! && !meal.isVegetarian){
-        return false;
-      }
-      if(activeFilters[Filter.vegan]! && !meal.isVegan){
-        return false;
-      }
-      return true;
-    }).toList();
+    final avalibaleMeals=ref.watch(filteredMealProvider);
+
     Widget activePage=CategoryScreen(avalibleMeals: avalibaleMeals,);
+
     var  activeTitle='Category';
     if(_selectedPageIndex==1){
       final favoiteMeals=ref.watch(favoriteMealsProvider);
     activePage=  MealsScreen( 
       meals: favoiteMeals,
-);
+    );
     activeTitle='Your Favorits';
   }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(activeTitle),

@@ -4,6 +4,7 @@ import 'package:meal_app/main.dart';
 import 'package:meal_app/models/meal.dart';
 import 'package:meal_app/providers/favorites_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_app/providers/filters_provider.dart';
 
 class MealDetailsScreen extends ConsumerWidget{
     const MealDetailsScreen({super.key,required this.meal});
@@ -13,6 +14,8 @@ class MealDetailsScreen extends ConsumerWidget{
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
+    final FavoritMeals=ref.watch(favoriteMealsProvider);
+    final isFavorite=FavoritMeals.contains(meal);
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -24,7 +27,20 @@ class MealDetailsScreen extends ConsumerWidget{
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                 content: Text(wasAdd ? 'Add  to favorites':'removed from favorites')));
             },
-            icon:const Icon(Icons.star))
+            icon:AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              transitionBuilder: (child, animation) {
+                return RotationTransition(
+                  turns: Tween<double>(begin: 0.8,end: 1).animate(animation),
+                  child: child,
+                  );
+                  },
+              child:Icon(
+                isFavorite ? Icons.star: Icons.star_border,
+                key: ValueKey(isFavorite),
+                ),
+              ),
+            ),
         ],
         title: Text(meal.title)),
         body:SingleChildScrollView(
